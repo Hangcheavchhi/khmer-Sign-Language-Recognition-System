@@ -1,0 +1,185 @@
+# Khmer Sign Language Recognition
+
+A real-time isolated Khmer Sign Language (KSL) recognition system using MediaPipe landmarks and deep learning models.
+
+## Features
+
+* Real-time sign language recognition using a webcam
+* MediaPipe Hands and Pose landmark extraction
+* Feature-based temporal sequence processing
+* Supports 20 isolated Khmer signs
+* GRU, BiGRU, LSTM, and BiLSTM models
+
+## Project Structure
+
+```text
+KHMER_SIGN_LANGUAGE_RECOGNITION/
+│
+├── Landmark/
+│   ├── Feature_Engineering.ipynb
+│   ├── Landmark_Extraction.ipynb
+│   └── Landmark_Normalization.ipynb
+│
+├── Live_testing/
+│   └── Real_Time.py
+│
+├── Model/
+│   ├── bgru_best_model_v1.h5
+│   ├── blstm_best_model_v1.h5
+│   ├── gru_best_model_v2.h5
+│   ├── label_map.json
+│   └── lstm_best_model_v1.h5
+│
+├── Training/
+│   ├── BGRU_Model.ipynb
+│   ├── BLSTM_Model.ipynb
+│   ├── GRU_Model.ipynb
+│   └── LSTM_Model.ipynb
+│
+├── README.md
+└── requirement.txt
+```
+Landmark/       → Landmark extraction, normalization, and feature engineering
+Live_testing/   → Real-time webcam recognition
+Model/          → Trained models and label mapping
+Training/       → Model training notebooks
+
+## Installation
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yourusername/ksl-recognition.git
+cd ksl-recognition
+```
+
+### 2. Create and Activate Virtual Environment
+
+**Using Python's venv (Recommended):**
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate on Windows
+venv\Scripts\activate
+
+# Activate on macOS/Linux
+source venv/bin/activate
+```
+
+**Using Conda (Alternative):**
+```bash
+# Create conda environment
+conda create -n ksl_env python=3.9
+conda activate ksl_env
+```
+
+### 3. Install Dependencies
+
+```bash
+# Install required packages
+pip install -r requirements.txt
+```
+
+**Requirements Overview:**
+- **OpenCV** (4.8.1.78) - Video capture and processing
+- **MediaPipe** (0.10.8) - Hand and pose landmark detection
+- **NumPy** (1.24.3) - Array operations for landmark data
+
+---
+
+## Live Testing
+
+### Run Real-Time Inference
+
+```bash
+python scripts/live_testing.py
+```
+
+### Configuration
+Before running, ensure the model path in `scripts/live_testing.py` points to your trained model:
+
+```python
+MODEL_PATH = "models/gru_best_model_v2.h5"  # Update with your model path
+```
+
+### Live Testing Controls
+| Key | Action |
+|-----|--------|
+| `Q` | Quit the application |
+| `R` | Start recording (when in data collection mode) |
+
+---
+
+## Model Architecture
+
+The project implements and evaluates four sequential deep learning models:
+
+| Model | Description | Use Case |
+|-------|-------------|----------|
+| **GRU** | Gated Recurrent Unit | Baseline model, faster training |
+| **BiGRU** | Bidirectional GRU | Captures both forward and backward dependencies |
+| **LSTM** | Long Short-Term Memory | Handles long-term dependencies |
+| **BiLSTM** | Bidirectional LSTM | Best for capturing full context |
+
+### Input Features
+- **Sequence Length**: 30 frames per sample
+- **Feature Extraction**: MediaPipe holistic landmarks
+  - 33 pose landmarks
+  - 21 left hand landmarks
+  - 21 right hand landmarks
+  - 468 face landmarks
+- **Total Features**: 543 landmarks × 3 (x, y, z) = 1,629 features
+
+### Feature Engineering
+- Normalized coordinates relative to the wrist
+- Movement velocity features (optical flow)
+- Handedness indicators
+
+---
+
+## Project Overview
+
+This project focuses on **real-time isolated Khmer Sign Language (KSL) recognition** using:
+
+1. **MediaPipe Holistic** for landmark extraction
+2. **Sequential Neural Networks** (GRU, LSTM, BiGRU, BiLSTM) for sequence classification
+3. **Real-time webcam inference** with live feedback
+
+---
+
+## Dataset Notes
+
+- **Isolated signs**: Each sign is recorded as a single gesture
+- **Sequence length**: 30 frames per sign
+- **Class diversity**: Multiple samples per sign for robust training
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| **Camera not detected** | Try different camera index (0, 1, 2) in the script |
+| **Model download stuck** | Cancel with `Ctrl+C`, run again or download model manually |
+| **OpenCV import error** | Ensure correct OpenCV version: `pip install opencv-python==4.8.1.78` |
+| **Slow performance** | Set `model_complexity=0` in MediaPipe initialization |
+
+### Dependencies
+```bash
+# If you encounter version conflicts
+pip install --upgrade pip
+pip install -r requirements.txt --upgrade
+```
+
+---
+
+## Contributors
+- [Chhi Hangcheav] - Dataset collection and model training
+
+## License
+This project is for research and educational purposes. 
+
+## References
+- MediaPipe Holistic: [Google MediaPipe](https://developers.google.com/mediapipe)
